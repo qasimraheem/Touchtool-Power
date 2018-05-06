@@ -1,0 +1,94 @@
+property bar_uuid : "4DA18D0E-FCD8-4895-89A7-C62056F36176"
+property bar_colour : "0,255,0,255"
+property get_precent : ""
+property get_precent_colour : ""
+property get_time : ""
+property get_ac : ""
+property batt_info : "Polling"
+
+-- Program load
+
+update_colour()
+
+get_info()
+
+update_bar()
+
+make_info()
+
+return batt_info
+
+--end load
+
+on update_bar()
+	
+	tell application "BetterTouchTool"
+		update_touch_bar_widget bar_uuid background_color bar_colour
+	end tell
+	
+end update_bar
+
+on get_info()
+	
+	set pmset_com to "pmset -g rawbatt | tr '\\n' ' ' | "
+	set get_ac to do shell script pmset_com & "awk '{print $3 $4}'"
+	
+	
+	if get_ac is "AC;Charging;" then
+		
+		set get_precent to do shell script pmset_com & "grep '%' | awk '{print $5}' | cut -c 1-3"
+		set get_precent_colour to do shell script pmset_com & "grep '%' | awk '{print $5}' | cut -c 1-2"
+		set get_time to do shell script pmset_com & "grep 'Time' | awk '{print $9}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- |rev "
+		set get_hourtime to do shell script pmset_com & "grep 'Time' | awk '{print $9}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- | rev | cut -d':' -f1"
+	end if
+	
+	if get_ac is "NoAC;" then
+		
+		set get_precent to do shell script pmset_com & "grep '%' | awk '{print $7}' | cut -c 1-3"
+		set get_precent_colour to do shell script pmset_com & "grep '%' | awk '{print $7}' | cut -c 1-2"
+		set get_time to do shell script pmset_com & "grep 'Time' | awk '{print $11}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- |rev "
+		set get_hourtime to do shell script pmset_com & "grep 'Time' | awk '{print $11}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- | rev | cut -d':' -f1"
+		
+	end if
+	
+	if get_time contains "1092:15" then
+		set get_time to ""
+	end if
+	
+	if get_precent contains "cap" then
+		set get_precent to ""
+		set get_time to ""
+	end if
+	
+end get_info
+
+on update_colour()
+	
+	considering numeric strings
+		if get_precent_colour is less than or equal to "25" then
+			set bar_colour to "201,0,0,255"
+			
+		else if get_precent_colour is less than or equal to 50 then
+			set bar_colour to "250,129,0,255"
+			
+		else if get_precent_colour is less than or equal to 70 then
+			set bar_colour to "105,137,0,255"
+			
+		else -- weather_cur is greater than "95"
+			set bar_colour to "0,137,0,255"
+		end if
+	end considering
+	
+end update_colour
+
+on make_info()
+	
+	if get_ac is "AC;Charging;" then
+		set batt_info to "⬆︎ " & get_precent & " " & get_time
+	end if
+	
+	if get_ac is "NoAC;" then
+		set batt_info to "⬇︎ " & get_precent & " " & get_time
+	end if
+	
+end make_info
