@@ -12,37 +12,29 @@ update_colour()
 
 get_info()
 
-update_bar()
-
 make_info()
 
-return batt_info
+update_bar()
 
 --end load
 
-on update_bar()
-	
-	tell application "BetterTouchTool"
-		update_touch_bar_widget bar_uuid background_color bar_colour
-	end tell
-	
-end update_bar
+
 
 on get_info()
 	
 	set pmset_com to "pmset -g rawbatt | tr '\\n' ' ' | "
-	set get_ac to do shell script pmset_com & "awk '{print $3 $4}'"
+	set get_ac to do shell script pmset_com & "awk '{print $3}'"
 	
 	
-	if get_ac is "AC;Charging;" then
+	if get_ac is "AC;" then
 		
-		set get_precent to do shell script pmset_com & "grep '%' | awk '{print $5}' | cut -c 1-3"
-		set get_precent_colour to do shell script pmset_com & "grep '%' | awk '{print $5}' | cut -c 1-2"
-		set get_time to do shell script pmset_com & "grep 'Time' | awk '{print $9}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- |rev "
+		set get_precent to do shell script pmset_com & "grep '%' | awk '{print $6}' | cut -c 1-3"
+		set get_precent_colour to do shell script pmset_com & "grep '%' | awk '{print $6}' | cut -c 1-2"
+		set get_time to do shell script pmset_com & "grep 'Time' | awk '{print $10}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- |rev "
 		set get_hourtime to do shell script pmset_com & "grep 'Time' | awk '{print $9}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- | rev | cut -d':' -f1"
 	end if
 	
-	if get_ac is "NoAC;" then
+	if get_ac is "No" then
 		
 		set get_precent to do shell script pmset_com & "grep '%' | awk '{print $7}' | cut -c 1-3"
 		set get_precent_colour to do shell script pmset_com & "grep '%' | awk '{print $7}' | cut -c 1-2"
@@ -60,6 +52,10 @@ on get_info()
 		set get_time to ""
 	end if
 	
+	if get_time contains "0:00" then
+		set get_time to "∞"
+	end if
+	
 end get_info
 
 on update_colour()
@@ -75,7 +71,7 @@ on update_colour()
 			set bar_colour to "105,137,0,255"
 			
 		else -- weather_cur is greater than "95"
-			set bar_colour to "0,137,0,255"
+			set bar_colour to "0,182,0,255"
 		end if
 	end considering
 	
@@ -83,12 +79,22 @@ end update_colour
 
 on make_info()
 	
-	if get_ac is "AC;Charging;" then
+	if get_ac is "AC;" then
 		set batt_info to "⬆︎ " & get_precent & " " & get_time
 	end if
 	
-	if get_ac is "NoAC;" then
+	if get_ac is "No" then
 		set batt_info to "⬇︎ " & get_precent & " " & get_time
 	end if
 	
 end make_info
+
+on update_bar()
+	
+	tell application "BetterTouchTool"
+		return batt_info as string
+		update_touch_bar_widget bar_uuid background_color bar_colour
+	end tell
+	
+end update_bar
+
