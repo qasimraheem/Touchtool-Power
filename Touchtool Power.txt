@@ -1,5 +1,5 @@
 property bar_uuid : "4DA18D0E-FCD8-4895-89A7-C62056F36176"
-property bar_colour : "0,255,0,255"
+property bar_colour : "0,182,0,255"
 property get_precent : ""
 property get_precent_colour : ""
 property get_time : ""
@@ -52,6 +52,11 @@ on get_info()
 		set get_time to ""
 	end if
 	
+	if get_precent contains "100" then
+		set get_precent to get_precent & "%"
+		set get_precent_colour to "100"
+	end if
+	
 	if get_time contains "0:00" then
 		set get_time to "∞"
 	end if
@@ -69,6 +74,9 @@ on update_colour()
 			
 		else if get_precent_colour is less than or equal to 70 then
 			set bar_colour to "105,137,0,255"
+			
+		else if get_precent_colour is less than or equal to 100 then
+			set bar_colour to "0,182,0,255"
 			
 		else
 			set bar_colour to "0,182,0,255"
@@ -92,8 +100,10 @@ end make_info
 on update_bar()
 	
 	tell application "BetterTouchTool"
-		return batt_info as string
+		do shell script "sleep 0.5"
 		update_touch_bar_widget bar_uuid background_color bar_colour
+		
+		return batt_info as string
 	end tell
 	
 end update_bar
