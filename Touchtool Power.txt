@@ -28,9 +28,9 @@ on get_info()
 	
 	if get_ac is "AC;" then
 		
-		set get_precent to do shell script pmset_com & "grep '%' | awk '{print $6}' | cut -c 1-3"
+		set get_precent to do shell script pmset_com & "grep '%' | awk '{print $5}' | cut -c 1-3"
 		set get_precent_colour to do shell script pmset_com & "grep '%' | awk '{print $6}' | cut -c 1-2"
-		set get_time to do shell script pmset_com & "grep 'Time' | awk '{print $10}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- |rev "
+		set get_time to do shell script pmset_com & "grep 'Time' | awk '{print $9}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- |rev "
 		set get_hourtime to do shell script pmset_com & "grep 'Time' | awk '{print $9}' | tr 'Time=' ' ' | awk '{print $1}' | rev | cut -c2- | rev | cut -d':' -f1"
 	end if
 	
