@@ -96,10 +96,9 @@ end make_info
 on update_bar()
 	
 	tell application "BetterTouchTool"
-		do shell script "sleep 0.5"
-		update_touch_bar_widget bar_uuid background_color bar_colour
-		
-		return batt_info as string
+		set nice_batt_info to do shell script "echo " & quoted form of batt_info
+		update_touch_bar_widget quoted form of bar_uuid text quoted form of nice_batt_info background_color quoted form of bar_colour
+		return nice_batt_info as string
 	end tell
 	
 end update_bar
