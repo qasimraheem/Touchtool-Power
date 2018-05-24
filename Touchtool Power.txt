@@ -47,6 +47,9 @@ on get_info()
 	if get_time contains "(no" then
 		set get_time to ""
 	end if
+	if get_time contains "charge;" then
+		set get_time to ""
+	end if
 	if get_time contains "attached;" then
 		set get_time to ""
 	end if
