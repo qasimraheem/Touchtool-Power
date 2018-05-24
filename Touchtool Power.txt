@@ -47,6 +47,9 @@ on get_info()
 	if get_time contains "(no" then
 		set get_time to ""
 	end if
+	if get_time contains "attached;" then
+		set get_time to ""
+	end if
 	
 	if get_precent contains "100" then
 		--set get_precent to get_precent & "%"
@@ -68,7 +71,7 @@ on update_colour()
 		else if get_precent_colour is less than or equal to 50 then
 			set bar_colour to "250,129,0,255"
 			
-		else if get_precent_colour is less than or equal to 70 then
+		else if get_precent_colour is less than or equal to 75 then
 			set bar_colour to "105,137,0,255"
 			
 		else if get_precent_colour is less than or equal to 100 then
